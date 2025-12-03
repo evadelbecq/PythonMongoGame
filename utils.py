@@ -42,14 +42,16 @@ def convertToEntity(data):
             ATK=data['ATK'],
             HP=data['HP'],
             DEF=data['DEF'],
-            SPD=data['SPD']
+            SPD=data['SPD'],
+            CRT=data['CRT']
         )
     return models.Character(
         name=data['name'],
         ATK=data['ATK'],
         HP=data['HP'],
         DEF=data['DEF'],
-        SPD=data['SPD']
+        SPD=data['SPD'],
+        CRT=data['CRT']
     )
 
 def clear_screen():

@@ -31,17 +31,15 @@ def combat_loop(enemies, player, current_order):
         if combatant.is_alive():
             if combatant.type == 1:  # Character
                 target = random.choice([enemy for enemy in enemies.members if enemy.is_alive()])
-                damage = combatant.attack(target)
-                print(f"{combatant.name} attaque {target.name} et inflige {damage} points de dégâts.")
+                combatant.attack(target)
                 if target.is_alive() == False:
                     print(f"{target.name} est mort!")
             else:  # Enemy
                 target = random.choice([member for member in player.team.members if member.is_alive()])
-                damage = combatant.attack(target)
-                print(f"{combatant.name} attaque {target.name} et inflige {damage} points de dégâts.")
+                combatant.attack(target)             
                 if target.is_alive() == False:
                     print(f"{target.name} est mort!")
-        time.sleep(1)
+        time.sleep(2)
 
 def game_loop(player): 
     while True:

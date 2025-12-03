@@ -1,15 +1,21 @@
+import random
 class Entity:
-    def __init__(self, name, ATK, HP, DEF, SPD):
+    def __init__(self, name, ATK, HP, DEF, SPD, CRT):
         self.name = name
         self.ATK = ATK
         self.HP = HP
         self.maxHP = HP
         self.DEF = DEF
         self.SPD = SPD
+        self.CRT = CRT
 
     def attack(self, other):
-        damage = self.ATK - other.DEF
+        is_critical = random.randint(1, 100) <= self.CRT
+        damage = self.ATK * (2 if is_critical else 1) - other.DEF
         damage = max(damage, 0)
+        if is_critical:
+            print("Coup critique!")
+        print(f"{self.name} attaque {other.name} et inflige {damage} points de dégâts.")
         other.HP -= damage
         return damage
     
@@ -21,18 +27,18 @@ class Entity:
     
     def getInfo(self):
         if self.is_alive():  
-            return f"{self.name} - ATK: {self.ATK}, HP: {self.HP}/{self.maxHP}, DEF: {self.DEF}, SPD: {self.SPD}"
+            return f"{self.name} - ATK: {self.ATK}, HP: {self.HP}/{self.maxHP}, DEF: {self.DEF}, SPD: {self.SPD}, CRT: {self.CRT}"
         return f"{self.name} - MORT"
     
     
 class Character(Entity):
-    def __init__(self, name, ATK, HP, DEF, SPD):
-        super().__init__(name, ATK, HP, DEF, SPD)
+    def __init__(self, name, ATK, HP, DEF, SPD, CRT):
+        super().__init__(name, ATK, HP, DEF, SPD, CRT)
         self.type = 1
 
 class Enemy(Entity):
-    def __init__(self, name, ATK, HP, DEF, SPD):
-        super().__init__(name, ATK, HP, DEF, SPD)
+    def __init__(self, name, ATK, HP, DEF, SPD, CRT):
+        super().__init__(name, ATK, HP, DEF, SPD, CRT)
         self.type = 2
 
 class Team:
