@@ -43,6 +43,7 @@ def team_selection():
     characterData = utils.getCharacters()
     characters = [utils.convertToEntity(char) for char in characterData]
     while len(team) < 3:
+        #Selection loop
         utils.clear_screen()
         if len(team) > 0:
             print(team.getTeamInfo())

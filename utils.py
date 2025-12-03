@@ -41,13 +41,15 @@ def convertToEntity(data):
             name=data['name'],
             ATK=data['ATK'],
             HP=data['HP'],
-            DEF=data['DEF']
+            DEF=data['DEF'],
+            SPD=data['SPD']
         )
     return models.Character(
         name=data['name'],
         ATK=data['ATK'],
         HP=data['HP'],
-        DEF=data['DEF']
+        DEF=data['DEF'],
+        SPD=data['SPD']
     )
 
 def clear_screen():

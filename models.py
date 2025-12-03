@@ -1,10 +1,11 @@
 class Entity:
-    def __init__(self, name, ATK, HP, DEF):
+    def __init__(self, name, ATK, HP, DEF, SPD):
         self.name = name
         self.ATK = ATK
         self.HP = HP
         self.maxHP = HP
         self.DEF = DEF
+        self.SPD = SPD
 
     def attack(self, other):
         damage = self.ATK - other.DEF
@@ -20,18 +21,18 @@ class Entity:
     
     def getInfo(self):
         if self.is_alive():  
-            return f"{self.name} - ATK: {self.ATK}, HP: {self.HP}/{self.maxHP}, DEF: {self.DEF}"
+            return f"{self.name} - ATK: {self.ATK}, HP: {self.HP}/{self.maxHP}, DEF: {self.DEF}, SPD: {self.SPD}"
         return f"{self.name} - MORT"
     
     
 class Character(Entity):
-    def __init__(self, name, ATK, HP, DEF):
-        super().__init__(name, ATK, HP, DEF)
+    def __init__(self, name, ATK, HP, DEF, SPD):
+        super().__init__(name, ATK, HP, DEF, SPD)
         self.type = 1
 
 class Enemy(Entity):
-    def __init__(self, name, ATK, HP, DEF):
-        super().__init__(name, ATK, HP, DEF)
+    def __init__(self, name, ATK, HP, DEF, SPD):
+        super().__init__(name, ATK, HP, DEF, SPD)
         self.type = 2
 
 class Team:

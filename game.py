@@ -16,7 +16,7 @@ def pick_enemies():
 def turn_order(enemies, team):
     # Randomly assign turn order between all combatants
     all_combatants = enemies.members + team.members
-    random.shuffle(all_combatants)
+    all_combatants.sort(key=lambda x: x.SPD,  reverse=True)
     return all_combatants
 
 def combat_loop(enemies, player, current_order):
@@ -25,8 +25,7 @@ def combat_loop(enemies, player, current_order):
         print('======================================\n'
             f'             Vague n {curent_wave}!\n'
             '======================================')
-        print(f"Enemis a affronter: {enemies.getTeamInfo()}")
-        print(f"État de l'équipe : {player.team.getTeamInfo()}")
+        print(f"Ordre du tour :\n{'\n'.join(f'- {c.getInfo()}' for c in current_order)}\n")
         if not enemies.members_alive() or not player.team.members_alive():
             break
         if combatant.is_alive():
