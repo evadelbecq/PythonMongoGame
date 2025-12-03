@@ -32,12 +32,36 @@ def getEnemies():
     enemies = collection.find({"type": 2})
     return [enemy for enemy in enemies]
 
+def getBosses():
+    collection = get_collection('entities')
+    bosses = collection.find({"type": 3})
+    return [boss for boss in bosses]
+
 def cleanEntities():
     db.drop_collection('entities')
 
 def convertToEntity(data):
     if (data['type'] == 2):
         return models.Enemy(
+            name=data['name'],
+            ATK=data['ATK'],
+            HP=data['HP'],
+            DEF=data['DEF'],
+            SPD=data['SPD'],
+            CRT=data['CRT']
+        )
+    elif (data['type'] == 3):
+        class_name = data['name'].replace(" ", "")
+        boss_class = getattr(models, class_name, models.Boss)
+        if boss_class != models.Boss:
+            return boss_class(
+                ATK=data['ATK'],
+                HP=data['HP'],
+                DEF=data['DEF'],
+                SPD=data['SPD'],
+                CRT=data['CRT']
+            )
+        return models.Boss(
             name=data['name'],
             ATK=data['ATK'],
             HP=data['HP'],

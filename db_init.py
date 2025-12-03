@@ -34,8 +34,10 @@ def initialize_database():
             models.Enemy(name="Cyberpsycho", ATK=35, HP=150, DEF=5, SPD=14, CRT=10),
         ]
 
-
-        utils.insertMany('entities', [entity.__dict__ for entity in [*characters, *enemies]])
+        bosses = [
+            models.AdamSmasher(ATK=70, HP=600, DEF=20, SPD=10, CRT=12)
+        ]
+        utils.insertMany('entities', [entity.__dict__ for entity in [*characters, *enemies, *bosses]])
         print("Populated entities into the database.")
         print("Characters : \n",utils.getCharacters())
         print("Enemies : \n", utils.getEnemies())

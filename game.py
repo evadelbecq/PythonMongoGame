@@ -5,9 +5,18 @@ import time
 
 enemiesData = utils.getEnemies()
 curent_wave = 1
+bossData = utils.getBosses()
+
+def pick_boss():
+    # Pick the boss from the database data
+    boss_info = bossData[0]
+    boss = utils.convertToEntity(boss_info)
+    return boss
 
 def pick_enemies():
-    # Create a pool of enemy from the database date, increment the max amount of enemy every 10 waves
+    # Create a pool of enemy from the database date, increase the max amount of enemy every 10 waves, switch to pick boss every 10 waves
+    if curent_wave % 10 == 0:
+        return [pick_boss()]
     enemiesPool = [utils.convertToEntity(enemy) for enemy in enemiesData]
     max_enemies = 3 + (curent_wave // 10)
     nb_enemies = random.randint(1, max_enemies)
@@ -24,6 +33,7 @@ def combat_loop(enemies, player, current_order):
         utils.clear_screen()
         print('======================================\n'
             f'             Vague n {curent_wave}!\n'
+            f'   {"Boss Fight!" if curent_wave % 10 == 0 else ""} \n'
             '======================================')
         print(f"Ordre du tour :\n{'\n'.join(f'- {c.getInfo()}' for c in current_order)}\n")
         if not enemies.members_alive() or not player.team.members_alive():
@@ -35,10 +45,15 @@ def combat_loop(enemies, player, current_order):
                 if target.is_alive() == False:
                     print(f"{target.name} est mort!")
             else:  # Enemy
-                target = random.choice([member for member in player.team.members if member.is_alive()])
+                if combatant.type == 3:
+                    target = player.team
+                else:
+                    target = random.choice([member for member in player.team.members if member.is_alive()])
+
+                print(target)
                 combatant.attack(target)             
-                if target.is_alive() == False:
-                    print(f"{target.name} est mort!")
+        else:
+            continue
         time.sleep(2)
 
 def game_loop(player): 
@@ -54,6 +69,10 @@ def game_loop(player):
             print(f"\n ============================================================================ \n"
                   f"                   Vague n {curent_wave} terminée! Votre équipe a gagné.\n"
                   " ============================================================================")
+            if curent_wave % 10 == 0: 
+                for member in player.team.members:
+                        member.HP = member.maxHP
+                print("Vague de boss terminée! l'Équipe a été soignée")
             print(f"État de l'équipe : {player.team.getTeamInfo()}")
             player.score += curent_wave * 10
             curent_wave += 1
@@ -65,5 +84,6 @@ def game_loop(player):
                   f"                   Score final de {player.username} : {player.score}\n"
                   " ============================================================================")
             utils.saveScore(player)
+            curent_wave = 1
             break
 
