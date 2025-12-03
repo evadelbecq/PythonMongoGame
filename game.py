@@ -20,8 +20,13 @@ def turn_order(enemies, team):
     return all_combatants
 
 def combat_loop(enemies, player, current_order):
-    # 
     for combatant in current_order:
+        utils.clear_screen()
+        print('======================================\n'
+            f'             Vague n {curent_wave}!\n'
+            '======================================')
+        print(f"Enemis a affronter: {enemies.getTeamInfo()}")
+        print(f"État de l'équipe : {player.team.getTeamInfo()}")
         if not enemies.members_alive() or not player.team.members_alive():
             break
         if combatant.is_alive():
@@ -42,23 +47,22 @@ def combat_loop(enemies, player, current_order):
 def game_loop(player): 
     while True:
         global curent_wave
-        print('======================================\n'
-              f'             Vague n {curent_wave}!\n'
-              '======================================')
+
         enemies = models.Team(pick_enemies())
-        print(f"Enemis a affronter: {enemies.getTeamInfo()}")
         while enemies.members_alive() and player.team.members_alive():
             current_order = turn_order(enemies, player.team)
             combat_loop(enemies, player, current_order)
         if not enemies.members_alive():
+            utils.clear_screen()
             print(f"\n ============================================================================ \n"
                   f"                   Vague n {curent_wave} terminée! Votre équipe a gagné.\n"
                   " ============================================================================")
             print(f"État de l'équipe : {player.team.getTeamInfo()}")
             player.score += curent_wave * 10
             curent_wave += 1
-            # time.sleep(3)
+            time.sleep(3)
         else:
+            utils.clear_screen()
             print("Votre équipe a été vaincue. Fin du jeu.")
             print(f"\n ============================================================================ \n"
                   f"                   Score final de {player.username} : {player.score}\n"

@@ -5,6 +5,7 @@ import game
 def start_game():
     print("Starting the game...")
     while True:
+        utils.clear_screen()
         print('============================================================================\n'
               '                          Bienvenue dans CyberPynk !\n'
               '                         1. Commencer une nouvelle partie\n'
@@ -15,10 +16,13 @@ def start_game():
         choice = input('Entrez votre choix (1-3): \n')
         match choice:
             case '1':
+                utils.clear_screen()
                 team_selection()
             case '2':
+                utils.clear_screen()
                 print("Top 10 des joueurs :")
                 utils.showScores(10)
+                input("Appuyez sur Entrée pour revenir au menu principal...")
             case '3':
                 print("Merci d'avoir joué à CyberPynk ! À bientôt.")
                 break
@@ -39,6 +43,7 @@ def team_selection():
     characterData = utils.getCharacters()
     characters = [utils.convertToEntity(char) for char in characterData]
     while len(team) < 3:
+        utils.clear_screen()
         if len(team) > 0:
             print(team.getTeamInfo())
         print("Personnages disponibles :")
@@ -52,6 +57,7 @@ def team_selection():
         team.append(selected_char)
         characters.pop(int(choice) - 1)
         print(f"{selected_char.name} ajouté à l'équipe.")
+    utils.clear_screen()
     print(f"Équipe finale : {team.getTeamInfo()}")
     player = models.Player(username=username, team=team)
     game.game_loop(player)

@@ -1,5 +1,5 @@
 import pymongo
-
+import os 
 import models
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
@@ -49,3 +49,6 @@ def convertToEntity(data):
         HP=data['HP'],
         DEF=data['DEF']
     )
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
