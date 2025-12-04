@@ -35,12 +35,15 @@ def initialize_database():
         ]
 
         bosses = [
-            models.AdamSmasher(ATK=70, HP=600, DEF=20, SPD=10, CRT=12)
+            models.AdamSmasher(ATK=70, HP=600, DEF=20, SPD=10, CRT=12), 
+            models.YorinobuArasaka(ATK=65, HP=350, DEF=18, SPD=12, CRT=15)
         ]
-        utils.insertMany('entities', [entity.__dict__ for entity in [*characters, *enemies, *bosses]])
+        utils.insertMany('entities', [entity.__dict__ for entity in [*characters, *enemies]])
+        utils.insertMany('entities', [boss.__getstate__() for boss in bosses])
         print("Populated entities into the database.")
         print("Characters : \n",utils.getCharacters())
         print("Enemies : \n", utils.getEnemies())
+        print("Bosses : \n", utils.getBosses())
 
     except Exception as e:
         print(f"An error occurred during database initialization: {e}")

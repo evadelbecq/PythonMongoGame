@@ -5,7 +5,7 @@ import random
 import time
 
 enemiesData = utils.getEnemies()
-current_wave = 10
+current_wave = 1
 bossData = utils.getBosses()
 
 def isBossWave():
@@ -45,7 +45,7 @@ def combat_loop(enemies, player, current_order, loop_iteration):
                 combatant.attack(target)
             else:  # Enemy
                 if combatant.type == TYPE_BOSS:
-                    boss_turn(combatant, player)
+                    boss_turn(combatant, player, enemies)
                 else:
                     target = utils.choose_target(player.team)
                     combatant.attack(target)            
@@ -113,6 +113,5 @@ def wave_lost(player):
     utils.saveScore(player)
     current_wave = 1
 
-def boss_turn(boss, player):
-    target = player.team
-    boss.attack(target)
+def boss_turn(boss, player, enemies):
+    boss.attack(player.team, enemies)

@@ -51,6 +51,12 @@ class Boss(Entity):
         super().__init__(name, ATK, HP, DEF, SPD, CRT)
         self.type = TYPE_BOSS
         self.textEffect = textEffect
+    
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable textEffect function
+        state.pop('textEffect', None)
+        return state
 
 class Team:
     def __init__(self, members):
@@ -104,24 +110,47 @@ class AdamSmasher(Boss):
         team.members.sort(key=lambda x: x.HP)
         super().attack(team.members[0])
 
-    def attack(self, team):
+    def attack(self, TargetTeam, team):
         randomPick = random.randint(1, 10)
         if randomPick <= 3:
-            self.missileLaunch(team)
+            self.missileLaunch(TargetTeam)
         elif randomPick <= 5:
-            self.sandevistanOverdrive(team)
+            self.sandevistanOverdrive(TargetTeam)
         else:
             self.textEffect(f"Viens par la espèce de rat!")
-            target = utils.choose_target(team)
+            target = utils.choose_target(TargetTeam)
             super().attack(target)
 
-#en cours de dev
-# class YorinobuArasaka(Boss):
-#     def __init__(self, ATK, HP, DEF, SPD, CRT):
-#         super().__init__(name="Yorinobu Arasaka", ATK=ATK, HP=HP, DEF=DEF, SPD=SPD, CRT=CRT)
+class YorinobuArasaka(Boss):
+    def __init__(self, ATK, HP, DEF, SPD, CRT):
+        super().__init__(name="Yorinobu Arasaka", textEffect=utils.beam_print, ATK=ATK, HP=HP, DEF=DEF, SPD=SPD, CRT=CRT)
     
-#     def summonGuards(self, team):
-#         print(f"{self.name} invoque des gardes du corps!")
-#         utils.beam_print(f"Je vous paye pour ça tuez-les!")
-#         team.append(Enemy(name="Garde du corps", ATK=25, HP=60, DEF=5, SPD=10, CRT=5))
-#         team.append(Enemy(name="Garde du corps", ATK=25, HP=60, DEF=5, SPD=10, CRT=5))
+    def summonGuards(self, team):
+        print(f"{self.name} invoque des gardes du corps!")
+        self.textEffect(f"Je vous paye pour ça tuez-les!")
+        team.append(Enemy(name="Garde du corps", ATK=25, HP=60, DEF=5, SPD=10, CRT=5))
+        team.append(Enemy(name="Garde du corps", ATK=25, HP=60, DEF=5, SPD=10, CRT=5))
+
+    def generationalWealth(self, team):
+        print(f"{self.name} utilise Richesse Générationnelle! Il augmente les stats de son équipe et se soigne.")
+        self.HP += 50
+        if self.HP > self.maxHP:
+            self.HP = self.maxHP
+        for member in team.members:
+            member.ATK += 5
+            member.DEF += 5
+            member.SPD += 5
+            member.CRT += 5
+        self.textEffect(f"Admirez la richesse de la famille Arasaka! *Rire de droite*")
+
+    def attack(self, TargetTeam, team):
+        randomPick = random.randint(1, 10)
+        if randomPick <= 3:
+            self.summonGuards(team)
+        elif randomPick <= 5:
+            self.generationalWealth(team)
+        else:
+            self.textEffect(f"Mange ça sale prolo!")
+            target = utils.choose_target(TargetTeam)
+            super().attack(target)
+
