@@ -33,7 +33,7 @@ def combat_loop(enemies, player, current_order):
         utils.clear_screen()
         print('======================================\n'
             f'             Vague n {curent_wave}!\n'
-            f'   {"Boss Fight!" if curent_wave % 10 == 0 else ""} \n'
+            f'              {"Boss Fight!" if curent_wave % 10 == 0 else ""} \n'
             '======================================')
         print(f"Ordre du tour :\n{'\n'.join(f'- {c.getInfo()}' for c in current_order)}\n")
         if not enemies.members_alive() or not player.team.members_alive():
@@ -50,7 +50,6 @@ def combat_loop(enemies, player, current_order):
                 else:
                     target = random.choice([member for member in player.team.members if member.is_alive()])
 
-                print(target)
                 combatant.attack(target)             
         else:
             continue

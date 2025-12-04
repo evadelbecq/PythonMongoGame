@@ -1,10 +1,15 @@
 import pymongo
 import os 
 import models
+from terminaltexteffects.effects.effect_laseretch import LaserEtch
+from terminaltexteffects.effects.effect_print import Print
+from terminaltexteffects.utils.graphics import Gradient, Color
+
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["gameDB"]
 
+# Database functions
 def get_collection(collection_name):
     return db[collection_name]
 
@@ -12,6 +17,7 @@ def insertMany(collection_name, entities_data):
     collection = get_collection(collection_name)
     collection.insert_many(entities_data)
 
+# Score functions
 def saveScore(player):
     collection = get_collection('players')
     collection.insert_one(player.__getstate__())
@@ -22,6 +28,7 @@ def showScores(top):
     for idx, score in enumerate(scores):
         print(f"{idx + 1}. {score['username']} - Score: {score['score']}")
 
+# Entity management functions
 def getCharacters():
     collection = get_collection('entities')
     characters = collection.find({"type": 1})
@@ -78,5 +85,26 @@ def convertToEntity(data):
         CRT=data['CRT']
     )
 
+# Screen functions (purely esthetic)
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def laser_print(text):
+    text = f"\n{text}\n\n\n"
+    laser = LaserEtch(text)
+    laser.effect_config.etch_speed = 2
+    laser.effect_config.etch_delay = 2
+    laser.effect_config.final_gradient_direction = Gradient.Direction.HORIZONTAL
+    laser.effect_config.final_gradient_stops = [Color("#FF3D12"), Color("#FFB412")]
+
+    with laser.terminal_output() as terminal:
+        for frame in laser:
+            terminal.print(frame)
+
+def print_effect(text): 
+    effect = Print(text)
+    effect.effect_config.print_speed = 4
+    effect.effect_config.print_head_return_speed = 3
+    with effect.terminal_output() as terminal:
+        for frame in effect:
+            terminal.print(frame)

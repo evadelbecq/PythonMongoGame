@@ -6,7 +6,7 @@ def start_game():
     print("Starting the game...")
     while True:
         utils.clear_screen()
-        print('============================================================================\n'
+        utils.print_effect('============================================================================\n'
               '                          Bienvenue dans CyberPynk !\n'
               '                         1. Commencer une nouvelle partie\n'
               '                         2. Consulter le classement\n'
