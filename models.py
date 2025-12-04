@@ -1,4 +1,5 @@
 import random
+from constants import TYPE_BOSS, TYPE_CHARACTER, TYPE_ENEMY
 import utils
 
 class Entity:
@@ -38,17 +39,17 @@ class Entity:
 class Character(Entity):
     def __init__(self, name, ATK, HP, DEF, SPD, CRT):
         super().__init__(name, ATK, HP, DEF, SPD, CRT)
-        self.type = 1
+        self.type = TYPE_CHARACTER
 
 class Enemy(Entity):
     def __init__(self, name, ATK, HP, DEF, SPD, CRT):
         super().__init__(name, ATK, HP, DEF, SPD, CRT)
-        self.type = 2
+        self.type = TYPE_ENEMY
 
 class Boss(Entity):
     def __init__(self, name, ATK, HP, DEF, SPD, CRT):
         super().__init__(name, ATK, HP, DEF, SPD, CRT)
-        self.type = 3
+        self.type = TYPE_BOSS
 
 class Team:
     def __init__(self, members):
@@ -109,5 +110,16 @@ class AdamSmasher(Boss):
             self.sandevistanOverdrive(team)
         else:
             utils.laser_print(f"Viens par la espèce de rat!")
-            target = random.choice([member for member in team.members if member.is_alive()])
+            target = utils.choose_target(team)
             super().attack(target)
+
+#en cours de dev
+# class YorinobuArasaka(Boss):
+#     def __init__(self, ATK, HP, DEF, SPD, CRT):
+#         super().__init__(name="Yorinobu Arasaka", ATK=ATK, HP=HP, DEF=DEF, SPD=SPD, CRT=CRT)
+    
+#     def summonGuards(self, team):
+#         print(f"{self.name} invoque des gardes du corps!")
+#         utils.beam_print(f"Je vous paye pour ça tuez-les!")
+#         team.append(Enemy(name="Garde du corps", ATK=25, HP=60, DEF=5, SPD=10, CRT=5))
+#         team.append(Enemy(name="Garde du corps", ATK=25, HP=60, DEF=5, SPD=10, CRT=5))

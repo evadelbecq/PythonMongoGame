@@ -1,10 +1,13 @@
 import pymongo
 import os 
+from constants import TYPE_ENEMY
+import random
 import models
 from terminaltexteffects.effects.effect_laseretch import LaserEtch
 from terminaltexteffects.effects.effect_print import Print
-from terminaltexteffects.utils.graphics import Gradient, Color
-
+from terminaltexteffects.effects.effect_colorshift import ColorShift
+from terminaltexteffects.utils.graphics import Gradient, Color, ColorPair
+from terminaltexteffects.effects.effect_beams import Beams
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["gameDB"]
@@ -48,7 +51,7 @@ def cleanEntities():
     db.drop_collection('entities')
 
 def convertToEntity(data):
-    if (data['type'] == 2):
+    if (data['type'] == TYPE_ENEMY):
         return models.Enemy(
             name=data['name'],
             ATK=data['ATK'],
@@ -85,6 +88,9 @@ def convertToEntity(data):
         CRT=data['CRT']
     )
 
+def choose_target(target_team):
+    return random.choice([member for member in target_team.members if member.is_alive()])
+
 # Screen functions (purely esthetic)
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -101,10 +107,33 @@ def laser_print(text):
         for frame in laser:
             terminal.print(frame)
 
-def print_effect(text): 
+def print_effect(text, animate=True):
+    if not animate:
+        effect = ColorShift(text)
+        effect.effect_config.final_gradient_stops = (Color("#CE1223"), Color("#F7EF02"))
+        effect.effect_config.gradient_stops = (Color("#CE1223"), Color("#F7EF02"))
+        effect.effect_config.gradient_steps = (1)
+        effect.effect_config.gradient_frames = 1
+        effect.effect_config.no_travel = True
+        effect.effect_config.no_loop = True
+        effect.effect_config.cycles = 1
+        effect.effect_config.final_gradient_direction = Gradient.Direction.VERTICAL
+        with effect.terminal_output() as terminal:
+            for frame in effect:
+                terminal.print(frame)
+        return
+
     effect = Print(text)
     effect.effect_config.print_speed = 4
     effect.effect_config.print_head_return_speed = 3
+    effect.effect_config.final_gradient_stops = (Color("#CE1223"), Color("#F7EF02"))
+    effect.effect_config.final_gradient_direction = Gradient.Direction.VERTICAL
+    with effect.terminal_output() as terminal:
+        for frame in effect:
+            terminal.print(frame)
+
+def beam_print(text):
+    effect = Beams(text)
     with effect.terminal_output() as terminal:
         for frame in effect:
             terminal.print(frame)
