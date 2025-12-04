@@ -47,9 +47,10 @@ class Enemy(Entity):
         self.type = TYPE_ENEMY
 
 class Boss(Entity):
-    def __init__(self, name, ATK, HP, DEF, SPD, CRT):
+    def __init__(self, name, ATK, HP, DEF, SPD, CRT, textEffect):
         super().__init__(name, ATK, HP, DEF, SPD, CRT)
         self.type = TYPE_BOSS
+        self.textEffect = textEffect
 
 class Team:
     def __init__(self, members):
@@ -83,11 +84,12 @@ class Player:
 
 class AdamSmasher(Boss):
     def __init__(self, ATK, HP, DEF, SPD, CRT):
-        super().__init__(name="Adam Smasher", ATK=ATK, HP=HP, DEF=DEF, SPD=SPD, CRT=CRT)
+        super().__init__(name="Adam Smasher", ATK=ATK, HP=HP, DEF=DEF, SPD=SPD, CRT=CRT, textEffect=utils.laser_print)
+        
     
     def missileLaunch(self, team):
         print(f"{self.name} utilise Lancement de Missiles!")
-        utils.laser_print(f"Bouffez ça bandes de sacs a viande!")
+        self.textEffect(f"Bouffez ça bandes de sacs a viande!")
         for member in team.members:
             if member.is_alive():
                 self.ATK //= len(team.members)
@@ -96,7 +98,7 @@ class AdamSmasher(Boss):
     
     def sandevistanOverdrive(self, team):
         print(f"{self.name} active Sandevistan Overdrive! Sa vitesse et sa précision augmentent.")
-        utils.laser_print(f"Meurs tas de chair!")
+        self.textEffect(f"Meurs tas de chair!")
         self.SPD += 10
         self.CRT += 5
         team.members.sort(key=lambda x: x.HP)
@@ -109,7 +111,7 @@ class AdamSmasher(Boss):
         elif randomPick <= 5:
             self.sandevistanOverdrive(team)
         else:
-            utils.laser_print(f"Viens par la espèce de rat!")
+            self.textEffect(f"Viens par la espèce de rat!")
             target = utils.choose_target(team)
             super().attack(target)
 

@@ -14,10 +14,8 @@ def print_menu():
 
 def start_game():
     print("Starting the game...")
-    print_menu()
-
     while True:
-
+        print_menu()
         choice = input('Entrez votre choix (1-3): \n')
         match choice:
             case '1':

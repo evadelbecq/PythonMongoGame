@@ -5,8 +5,12 @@ import random
 import time
 
 enemiesData = utils.getEnemies()
-current_wave = 1
+current_wave = 10
 bossData = utils.getBosses()
+
+def isBossWave():
+    global current_wave
+    return current_wave % 10 == 0
 
 def pick_boss():
     # Pick the boss from the database data
@@ -16,7 +20,7 @@ def pick_boss():
 
 def pick_enemies():
     # Create a pool of enemy from the database date, increase the max amount of enemy every 10 waves, switch to pick boss every 10 waves
-    if current_wave % 10 == 0:
+    if isBossWave():
         return [pick_boss()]
     enemiesPool = [utils.convertToEntity(enemy) for enemy in enemiesData]
     max_enemies = 3 + (current_wave // 10)
@@ -29,7 +33,9 @@ def turn_order(enemies, team):
     all_combatants.sort(key=lambda x: x.SPD,  reverse=True)
     return all_combatants
 
-def combat_loop(enemies, player, current_order):
+def combat_loop(enemies, player, current_order, loop_iteration):
+    animate = loop_iteration == 0
+    print_turn_info(current_order, animate, enemies.members[0].textEffect if isBossWave() else None)
     for combatant in current_order:
         if not enemies.members_alive() or not player.team.members_alive():
             break
@@ -49,30 +55,37 @@ def combat_loop(enemies, player, current_order):
 
 def game_loop(player): 
     while True:
+        loop_iteration = 0
         enemies = models.Team(pick_enemies())
         while enemies.members_alive() and player.team.members_alive():
             current_order = turn_order(enemies, player.team)
-            combat_loop(enemies, player, current_order)
+            combat_loop(enemies, player, current_order, loop_iteration)
+            loop_iteration += 1
         if not enemies.members_alive():
+            loop_iteration = 0
             wave_won(player)
         else:
+            loop_iteration = 0
             wave_lost(player)
             break
+        
 
-def print_turn_info(current_order, effect=None):
+def print_turn_info(current_order, animate=True, effect=None):
     global current_wave
     utils.clear_screen()
-    if effect:
+    if effect and animate:
         effect(
             '======================================\n'
             f'             Vague n {current_wave}!\n'
             f'              {"Boss Fight!" if current_wave % 10 == 0 else ""} \n'
             '======================================'
         )
-    print('======================================\n'
+        print(f"Ordre du tour :\n{'\n'.join(f'- {c.getInfo()}' for c in current_order)}\n")
+        return
+    utils.print_effect('======================================\n'
         f'             Vague n {current_wave}!\n'
         f'              {"Boss Fight!" if current_wave % 10 == 0 else ""} \n'
-        '======================================')
+        '======================================', animate)
     print(f"Ordre du tour :\n{'\n'.join(f'- {c.getInfo()}' for c in current_order)}\n")
 
 def wave_won(player):
@@ -98,7 +111,7 @@ def wave_lost(player):
                        f"                   Score final de {player.username} : {player.score}\n"
                         "============================================================================")
     utils.saveScore(player)
-    current_wave = 0
+    current_wave = 1
 
 def boss_turn(boss, player):
     target = player.team
